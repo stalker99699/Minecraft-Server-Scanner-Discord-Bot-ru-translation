@@ -69,12 +69,19 @@ function createButtons(index, pages, server, showingOldPlayers, language, user) 
                 .setStyle(ButtonStyle.Secondary)
         )
     }
-    return buttons;
+    let apiButton = new ActionRowBuilder()
+        .addComponents(
+            new ButtonBuilder()
+                .setLabel('API')
+                .setStyle(ButtonStyle.Link)
+                .setURL(`${config.displayApi || config.api}/streamsnipe${language == null ? '' : `?language=${language}`}`)
+        )
+    return [buttons, apiButton];
 }
 
 async function getServer(language, index, interaction, user, showingOldPlayers) {
     if (results == null) {
-        await interaction.editReply({ embeds: [new EmbedBuilder().setColor('#02a337').setDescription(`Found ${twitchStreams.length.toLocaleString()} Twitch streams. Searching servers...`)], components: [createButtons(0)] });
+        await interaction.editReply({ embeds: [new EmbedBuilder().setColor('#02a337').setDescription(`Searching servers...`)], components: createButtons(0) });
         while (results == null) await new Promise(res => setTimeout(res, 100));
     }
     if (results.length == 0) return await interaction.editReply({ embeds: [new EmbedBuilder().setColor('#ff0000').setDescription(`No streamers' servers could be found.`)]});
@@ -88,7 +95,7 @@ async function getServer(language, index, interaction, user, showingOldPlayers) 
 
     embed = createEmbed(filteredResults, index, showingOldPlayers);
     buttons = createButtons(index, filteredResults.length > 1, filteredResults[index], showingOldPlayers, language, user);
-    await interaction.editReply({ embeds: [embed], components: [buttons] });
+    await interaction.editReply({ embeds: [embed], components: buttons });
 }
 
 module.exports = {
