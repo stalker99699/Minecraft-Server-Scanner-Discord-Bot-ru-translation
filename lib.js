@@ -105,6 +105,7 @@ module.exports = {
       for (var i = 0; i < playerList.length; i++) {
         oldString = result;
         if (!showingOldPlayers && playerList[i].lastSession != server.lastSeen) continue;
+        if (showingOldPlayers) playerList.sort((a, b) => b.lastSession - a.lastSession);
         result += showingOldPlayers ? `\n${result.endsWith('```') || showingOldPlayers ? '' : '\n'}\`${playerList[i].name.replaceAll('`', `'`) || ' '}\` <t:${playerList[i].lastSession}:${(new Date().getTime() / 1000) - playerList[i].lastSession > 86400 ? 'D' : 'R'}>` : `\n${result.endsWith('\`\`\`') ? '' : '\n'}${playerList[i].name.replaceAll('`', `'`) || ' '}\n${playerList[i].id.replaceAll('`', `'`) || ' '}`;
         if (result.length > 1024) {
           result = oldString;

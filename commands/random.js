@@ -109,10 +109,7 @@ module.exports = {
       buttons.components[0].data.disabled = true;
       buttons.components[1].data.disabled = true;
       await interaction.update({ content: '', embeds: [embed], components: [buttons] });
-      if (playerList == null) {
-        playerList = (await (await fetch(`${config.api}/servers?includePlayers=true&ip=${server.ip}&port=${server.port}`)).json()).data.playerHistory;
-        playerList.sort((a, b) => b.lastSession - a.lastSession);
-      }
+      if (playerList == null) playerList = (await (await fetch(`${config.api}/servers?includePlayers=true&ip=${server.ip}&port=${server.port}`)).json()).data.playerHistory;
       lastButtonPress = new Date();
       showingOldPlayers = !showingOldPlayers;
       buttons.components[1].data.label = showingOldPlayers ? 'Online Players' : 'Player History';
