@@ -55,69 +55,10 @@ if (config.discord.stats) {
 }
 
 
-let twitchAccessToken;
-let accessTokenTimeout = 0;
-async function refreshAccessToken() {
-    if (Math.floor((new Date()).getTime() / 1000) >= accessTokenTimeout - 21600) {
-        const twitchResponse = await (await fetch(`https://id.twitch.tv/oauth2/token?client_id=${config.twitch.clientId}&client_secret=${config.twitch.secret}&grant_type=client_credentials`, {
-            method: 'POST'
-        })).json();
-        twitchAccessToken = twitchResponse.access_token;
-        accessTokenTimeout = (new Date()).getTime() / 1000 + twitchResponse.expires_in;
-    }
-}
-
 let results = [];
 async function fetchStreams() {
-    if (results == null) return;
-    results = null;
-    if (twitchAccessToken == null) await (new Promise(resolve => setInterval(() => { if (twitchAccessToken != null) resolve(); }, 100)));
-
-    let streams = [];
-    const options = {
-        method: 'GET',
-        headers: {
-            'Client-ID': config.twitch.clientId,
-            'Authorization': `Bearer ${twitchAccessToken}`
-        }
-    }
-    console.log('[Twitch] Fetching streams...');
-    let response = await (await fetch('https://api.twitch.tv/helix/streams?game_id=27471&first=100', options)).json();
-    streams = response.data;
-    do {
-        try {
-            response = await (await fetch(`https://api.twitch.tv/helix/streams?game_id=27471&first=100&after=${response.pagination.cursor}`, options)).json();
-            streams = streams.concat(response.data);
-        } catch (err) {}
-    } while (response.pagination?.cursor != null)
-    console.log(`[Twitch] Fetched ${streams.length} streams.`);
-    for (const shard of shards) shard.send({ type: 'twitchStreams', streams });
-
-    console.log('[Twitch] Fetching servers...');
-    results = (await (await fetch(`${config.api}/servers?includePlayers=true&limit=1000`, {
-        method: 'POST',
-        body: JSON.stringify({
-            onlinePlayer: {
-                caseInsensitive: !config.commands.streamsnipe.caseSensitive,
-                data: streams.map(a => a.user_name)
-            }
-        })
-    })).json()).data;
-
-    for (let result of results) {
-        result.streams = streams
-            .filter(a => result.playerHistory.filter(a => a.lastSession == result.lastSeen).map(a => a.name.toLowerCase()).includes(a.user_name.toLowerCase()))
-            .filter((a, i, arr) => !arr.slice(0, i).some(b => a.user_name == b.user_name))
-            .slice(0, 10);
-    }
-    results = results.filter(a => a.streams.length > 0);
-    console.log(`[Twitch] Fetched ${results.length} servers.`);
-    for (const shard of shards) shard.send({ type: 'twitchResults', results });
+    results = (await (await fetch(`${config.api}/streamsnipe`)).json()).data;
+    for (const shard of shards) shard.send({ type: 'streamsnipes', results });
 }
-
-if (config.twitch.enabled) {
-    refreshAccessToken();
-    setInterval(refreshAccessToken, 7200);
-    fetchStreams();
-    setInterval(fetchStreams, 60000);
-}
+fetchStreams();
+setInterval(fetchStreams, 60000);

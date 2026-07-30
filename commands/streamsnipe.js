@@ -5,15 +5,10 @@ const config = require('../config.json');
 const languages = require('../languages.json');
 const { buttonHandler } = require('./search.js');
 
-let twitchStreams;
 let results;
 process.on('message', (message) => {
     switch (message.type) {
-        case 'twitchStreams': {
-            twitchStreams = message.streams;
-            break;
-        }
-        case 'twitchResults': {
+        case 'streamsnipes': {
             results = message.results;
             break;
         }
@@ -33,7 +28,7 @@ function createEmbed(servers, index, showingOldPlayers) {
         .setColor('#02a337')
         .setTitle(`${cleanIp(server.ip)}${server.port == 25565 ? '' : `:${server.port}`}`)
         .setAuthor({ name: 'MC Server Scanner', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
-        // .setThumbnail(`https://ping.cornbread2100.com/favicon?ip=${server.ip}&port=${server.port}&errors=false`) // looks like discord waits a few seconds for it to load before displaying the embed at all, which is annoying when scrolling 
+        // .setThumbnail(`https://ping.cornbread2100.com/favicon?ip=${server.ip}&port=${server.port}&errors=false`) // looks like discord waits a few seconds for it to load before displaying the embed at all, which is annoying when scrolling. Maybe I can send them all somewhere to force Discord to cache them?
         .addFields(
             { name: 'Version', value: `${server.version.name} (${server.version.protocol})` },
             { name: 'Description', value: String(getDescription(description)) || '​' },
@@ -78,15 +73,11 @@ function createButtons(index, pages, server, showingOldPlayers, language, user) 
 }
 
 async function getServer(language, index, interaction, user, showingOldPlayers) {
-    if (twitchStreams == null) {
-        await interaction.editReply({ embeds: [new EmbedBuilder().setColor('#02a337').setDescription(`Fetching streams...`)], components: [createButtons(0)] });
-        while (twitchStreams == null) await new Promise(res => setTimeout(res, 100));
-    }
-    if (twitchStreams.length == 0) return interaction.editReply('No streams found. This is likely a bug, please ping @cornbread2100 in the official support server (https://discord.gg/3u2fNRAMAN)');
     if (results == null) {
         await interaction.editReply({ embeds: [new EmbedBuilder().setColor('#02a337').setDescription(`Found ${twitchStreams.length.toLocaleString()} Twitch streams. Searching servers...`)], components: [createButtons(0)] });
         while (results == null) await new Promise(res => setTimeout(res, 100));
     }
+    if (results.length == 0) return await interaction.editReply({ embeds: [new EmbedBuilder().setColor('#ff0000').setDescription(`No streamers' servers could be found.`)]});
 
     let filteredResults = results;
     if (language != null) filteredResults = filteredResults.filter(a => a.streams.some(b => b.language == language));
@@ -131,7 +122,6 @@ module.exports = {
     },
     async execute(interaction, buttonCallbacks) {
         await interaction.deferReply();
-        if (!config.twitch.enabled) return await interaction.editReply({ content: 'Twitch features have been disabled on this bot, edit your config.json to enable them' });
 
         let language = interaction.options.getString('language');
         if (language != null && languages.find(a => a.value == language) == null) {

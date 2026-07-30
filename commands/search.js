@@ -223,7 +223,7 @@ module.exports = {
       case 'history': {
         const [ip, port] = content.split(':');
         const embed = interaction.message.embeds[0];
-        embed.data.fields[4].value = `${embed.data.fields[4].value.split('\n')[0]}\nLoading Players...`;
+        embed.data.fields[2].value = `${embed.data.fields[2].value.split('\n')[0]}\nLoading Players...`;
         await interaction.update({ embeds: [embed], components: [createButtons({ ip, port }, true, true)] });
         const playerList = (await (await fetch(`${config.api}/servers?includePlayers=true&ip=${ip}&port=${port}`)).json()).data[0].playerHistory;
         playerList.sort((a, b) => b.lastSession - a.lastSession);
@@ -235,7 +235,7 @@ module.exports = {
       case 'online' : {
         const [ip, port] = content.split(':');
         const embed = interaction.message.embeds[0];
-        embed.data.fields[4].value = `${embed.data.fields[4].value.split('\n')[0]}\nLoading Players...`;
+        embed.data.fields[2].value = `${embed.data.fields[2].value.split('\n')[0]}\nLoading Players...`;
         await interaction.update({ embeds: [embed], components: [createButtons({ ip, port }, false, true)] });
         const playerList = (await (await fetch(`${config.api}/servers?includePlayers=true&ip=${ip}&port=${port}`)).json()).data[0].playerHistory;
         playerList.sort((a, b) => b.lastSession - a.lastSession);

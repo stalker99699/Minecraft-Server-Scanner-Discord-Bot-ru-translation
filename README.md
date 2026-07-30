@@ -40,7 +40,6 @@ First, you'll need to install Node.js v18 or later from https://nodejs.org/. The
 ### ⚙️ Configuration
 - Rename or copy `config.template.json` to `config.json`.
 - Create a Discord bot in the [Discord Developer Portal](https://discord.com/developers) and enter your application's client id and bot token into your config.
-- If you want to enable Twitch features, create an application in the [Twitch Developer Portal](https://dev.twitch.tv/console) and enter your client id and secret into your config as well.
 - If you're also running the scanner yourself with your own database, you can [host your own api](https://github.com/kgurchiek/Minecraft-Server-Scanner-API) and enter your api url into the `api` setting. 
   - You can also change `displayURL` to make the bot use a different url in the API links exposed to users. This is useful if you have a public endpoint but internally want the bot to make a local or private connection.
 - You can also enable `stats` to display server counts on the bot's profile status and in the /stats command. If you aren't running your own database and api, you'll likely want to disable this as it wastes a lot of credits.
