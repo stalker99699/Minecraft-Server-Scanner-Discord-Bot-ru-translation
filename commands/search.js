@@ -523,7 +523,7 @@ module.exports = {
     if (country != null) argumentList += `\n- **country: **:flag_${country.toLowerCase()}: ${country}`;
     if (org != null) argumentList += `\n- **org: **${org}`;
     if (cracked != null) argumentList += `\n- **auth: **${cracked ? 'cracked' : 'premium' }`;
-    if (whitelisted != null) argumentList += `\n- **whitelisted ${whitelisted ? 'enabled' : 'disabled'}**`;
+    if (whitelisted != null) argumentList += `\n- **${whitelisted ? 'whitelisted' : 'not whitelisted'}**`;
     if (vanilla != null) argumentList += `\n- **${vanilla ? 'vanilla' : 'not vanilla'}**`;
 
     await interaction.reply({ content: argumentList, components: createListButtons() });
