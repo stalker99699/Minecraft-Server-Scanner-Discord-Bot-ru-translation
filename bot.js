@@ -4,30 +4,30 @@ const path = require('node:path');
 const { Client, Partials, Collection, Events, GatewayIntentBits, EmbedBuilder, ActivityType } = require('discord.js');
 const buttonCallbacks = {};
 
-// Catch all errors
+// Ловит все ошибки
 process.on('uncaughtException', console.error);
 
-// Initialize Discord.js (Along with the commands)
+// Инициализирует Discord.js (вместе с командами)
 const client = new Client({ partials: [Partials.Channel], intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages] });
 client.commands = new Collection();
 
-// Reads the files in the commands directory
+// Читает файлы в директории commands
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
-// Iterate over each command file, require it, and add it to the 'client.commands' collection
+// Перебирает каждый файл команды, подключает его и добавляет в коллекцию 'client.commands'
 for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
     client.commands.set(command.data.name, command);
-    console.log("[Loaded]: " + file);
+    console.log("[Загружено]: " + file);
 }
 
 let totalServers;
 function updateTotalServers(newTotalServers) {
     if (typeof newTotalServers == 'number' && newTotalServers != totalServers) {
         totalServers = newTotalServers;
-        if (totalServers != null && totalBedrock != null) client.user.setPresence({ activities: [{ name: `${(totalServers + totalBedrock).toLocaleString()} MC Servers`, type: ActivityType.Watching }]});
+        if (totalServers != null && totalBedrock != null) client.user.setPresence({ activities: [{ name: `${(totalServers + totalBedrock).toLocaleString()} MC Серверов`, type: ActivityType.Watching }]});
     }
 }
 
@@ -35,15 +35,15 @@ let totalBedrock;
 function updateTotalBedrock(newTotalBedrock) {
     if (typeof newTotalBedrock == 'number' && newTotalBedrock != totalBedrock) {
         totalBedrock = newTotalBedrock;
-        if (totalServers != null && totalBedrock != null) client.user.setPresence({ activities: [{ name: `${(totalServers + totalBedrock).toLocaleString()} MC Servers`, type: ActivityType.Watching }]});
+        if (totalServers != null && totalBedrock != null) client.user.setPresence({ activities: [{ name: `${(totalServers + totalBedrock).toLocaleString()} MC Серверов`, type: ActivityType.Watching }]});
     }
 }
 
-// When the client is ready, log a message to the console
+// Когда клиент готов, выводит сообщение в консоль
 client.once(Events.ClientReady, async () => {
-    // Logs how many servers the bot is logged in to
-    console.log(`[Bot]: ${client.user.tag}`)
-    console.log("[Servers]: " + (await client.shard.fetchClientValues('guilds.cache.size')).reduce((a, b) => a + b, 0));
+    // Выводит, на скольких серверах авторизован бот
+    console.log(`[Бот]: ${client.user.tag}`)
+    console.log("[Серверы]: " + (await client.shard.fetchClientValues('guilds.cache.size')).reduce((a, b) => a + b, 0));
 });
 
 process.on('message', (message) => {
@@ -59,7 +59,7 @@ process.on('message', (message) => {
     }
 });
 
-// When a chat input command is received, attempt to execute it
+// Когда получена команда чата, пытается выполнить её
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isChatInputCommand()) {
         const command = client.commands.get(interaction.commandName);
@@ -68,11 +68,11 @@ client.on(Events.InteractionCreate, async interaction => {
         try {
             await command.execute(interaction, buttonCallbacks, client, totalServers, updateTotalServers, totalBedrock, updateTotalBedrock);
         } catch (error) {
-            console.log('[Error]:');
+            console.log('[Ошибка]:');
             console.log(error);
             var errorEmbed = new EmbedBuilder()
                 .setColor("#ff0000")
-                .addFields({ name: 'Error', value: error.toString() })
+                .addFields({ name: 'Ошибка', value: error.toString() })
             if (interaction.replied || interaction.deferred) await interaction.editReply({ content: '', embeds: [errorEmbed] });
             else await interaction.reply({ content: '', embeds: [errorEmbed] });
         }
@@ -92,5 +92,5 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 });
 
-// Log the bot into the Discord API
+// Авторизует бота в Discord API
 client.login(config.discord.token);
