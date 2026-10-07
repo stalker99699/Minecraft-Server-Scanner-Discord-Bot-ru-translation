@@ -1,4 +1,4 @@
-// Fectches dependencies and inits variables
+// Загружает зависимости и инициализирует переменные
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { getDescription, thousandsSeparators, cleanIp, displayPlayers } = require('../lib.js');
 const countryCodes = require('../countries.json');
@@ -17,18 +17,18 @@ function createEmbed(server) {
   const newEmbed = new EmbedBuilder()
     .setColor('#02a337')
     .setTitle(`${cleanIp(server.ip)}${server.port == 25565 ? '' : `:${server.port}`}`)
-    .setAuthor({ name: 'MC Server Scanner', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
+    .setAuthor({ name: 'Сканер MC-серверов', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
     .setThumbnail(`https://ping.cornbread2100.com/favicon?ip=${server.ip}&port=${server.port}&errors=false`)
     .addFields(
-      { name: 'Version', value: `${server.version.name} (${server.version.protocol})` },
-      { name: 'Description', value: String(getDescription(description)) || '​' },
-      { name: 'Players', value: displayPlayers(server) },
-      { name: 'Discovered', value: `<t:${server.discovered}:${(new Date().getTime() / 1000) - server.discovered > 86400 ? 'D' : 'R'}>`},
-      { name: 'Last Seen', value: `<t:${server.lastSeen}:${(new Date().getTime() / 1000) - server.lastSeen > 86400 ? 'D' : 'R'}>` },
-      { name: 'Country', value: `${server.geo.country == null ? 'Unknown' : `:flag_${server.geo.country.toLowerCase()}: ${server.geo.country}`}` },
-      { name: 'Organization', value: server.org == null ? 'Unknown' : server.org },
-      { name: 'Auth', value: server.cracked == true ? 'Cracked' : server.cracked == false ? 'Premium' : 'Unknown' },
-      { name: 'Whitelist', value: server.whitelisted == true ? 'Enabled' : server.whitelisted == false ? 'Disabled' : 'Unknown' }
+      { name: 'Версия', value: `${server.version.name} (${server.version.protocol})` },
+      { name: 'Описание', value: String(getDescription(description)) || '​' },
+      { name: 'Игроки', value: displayPlayers(server) },
+      { name: 'Обнаружен', value: `<t:${server.discovered}:${(new Date().getTime() / 1000) - server.discovered > 86400 ? 'D' : 'R'}>`},
+      { name: 'Последний раз виден', value: `<t:${server.lastSeen}:${(new Date().getTime() / 1000) - server.lastSeen > 86400 ? 'D' : 'R'}>` },
+      { name: 'Страна', value: `${server.geo.country == null ? 'Неизвестно' : `:flag_${server.geo.country.toLowerCase()}: ${server.geo.country}`}` },
+      { name: 'Организация', value: server.org == null ? 'Неизвестно' : server.org },
+      { name: 'Аутентификация', value: server.cracked == true ? 'Пиратская' : server.cracked == false ? 'Премиум' : 'Неизвестно' },
+      { name: 'Белый список', value: server.whitelisted == true ? 'Включён' : server.whitelisted == false ? 'Отключён' : 'Неизвестно' }
     )
     .setTimestamp();
 
@@ -40,7 +40,7 @@ function createButtons(server, showingOldPlayers, loading = false) {
   if (showingOldPlayers != null || server.players?.hasPlayerSample) {
     buttons.addComponents(
       new ButtonBuilder()
-        .setLabel(loading ? 'Loading...' : showingOldPlayers == null ? 'Show Players' : showingOldPlayers ? 'Online Players' : 'Player History')
+        .setLabel(loading ? 'Загрузка...' : showingOldPlayers == null ? 'Показать игроков' : showingOldPlayers ? 'Игроки онлайн' : 'История игроков')
         .setStyle(ButtonStyle.Primary)
         .setCustomId(`search-${showingOldPlayers ? 'online' : 'history'}-${server.ip}:${server.port}`)
         .setDisabled(loading)
@@ -61,8 +61,8 @@ const displayVersion = (version) => `${shortenString(String(version?.name), 18)}
 function createList(servers, currentEmbed, totalResults, minimal) {
   const embed = new EmbedBuilder()
     .setColor('#02a337')
-    .setTitle(`Results ${thousandsSeparators(currentEmbed + 1)}-${thousandsSeparators(currentEmbed + servers.length)}/${thousandsSeparators(totalResults)}`)
-    .setAuthor({ name: 'MC Server Scanner', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
+    .setTitle(`Результаты ${thousandsSeparators(currentEmbed + 1)}-${thousandsSeparators(currentEmbed + servers.length)}/${thousandsSeparators(totalResults)}`)
+    .setAuthor({ name: 'Сканер MC-серверов', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
     .setTimestamp();
   
   let description = '';
@@ -79,129 +79,129 @@ function createList(servers, currentEmbed, totalResults, minimal) {
     description += `${i == 0 ? '' : '\n'}${i + 1}. ${minimal ? '' : (servers[i].geo?.country == null ? '❔ ' : `:flag_${servers[i].geo.country.toLowerCase()}: `)}`;
     description += `\`${displayIp(servers[i])}`;
     description += `${' '.repeat(longest.server - displayIp(servers[i]).length)}\``;
-    if (!minimal) description += ` \`${displayVersion(servers[i].version)}${' '.repeat(longest.version - displayVersion(servers[i].version).length)}\` Pinged <t:${servers[i].lastSeen}:R>`;
+    if (!minimal) description += ` \`${displayVersion(servers[i].version)}${' '.repeat(longest.version - displayVersion(servers[i].version).length)}\` Пинговался <t:${servers[i].lastSeen}:R>`;
   }
 
   embed.setDescription(description);
   return embed;
 }
 
-// Exports an object with the parameters for the target server
+// Экспортирует объект с параметрами для целевого сервера
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('search')
-    .setDescription('Searches the database for a Java Edition server with specific properties')
+    .setDescription('Ищет в базе данных сервер Java Edition с определёнными свойствами')
     .addBooleanOption(option =>
       option
         .setName('minimal')
-        .setDescription('Only shows ip and port in preview (recommended for mobile users)'))
+        .setDescription('Показывает только ip и порт в предпросмотре (рекомендуется для мобильных пользователей)'))
     .addStringOption(option =>
       option
         .setName('sort')
-        .setDescription('How to sort results')
+        .setDescription('Как сортировать результаты')
         .addChoices(
-          { name: 'None', value: 'none' },
-          { name: 'Last Ping (new to old)', value: 'lastSeen:d' },
-          { name: 'Last Ping (old to new)', value: 'lastSeen:a' },
-          { name: 'Discovery Date (new to old)', value: 'discovered:d' },
-          { name: 'Discovery Date (old to new)', value: 'discovered:a' }
+          { name: 'Нет', value: 'none' },
+          { name: 'Последний пинг (от новых к старым)', value: 'lastSeen:d' },
+          { name: 'Последний пинг (от старых к новым)', value: 'lastSeen:a' },
+          { name: 'Дата обнаружения (от новых к старым)', value: 'discovered:d' },
+          { name: 'Дата обнаружения (от старых к новым)', value: 'discovered:a' }
         ))
     .addIntegerOption(option =>
       option
         .setName('page')
-        .setDescription('Skips to a page of results'))
+        .setDescription('Переходит к странице результатов'))
     .addStringOption(option =>
       option
         .setName('playercount')
-        .setDescription('A range of online player counts'))
+        .setDescription('Диапазон количества игроков онлайн'))
     .addIntegerOption(option =>
       option
         .setName('playercap')
-        .setDescription('The server\'s maximum player capacity'))
+        .setDescription('Максимальная вместимость сервера по игрокам'))
     .addBooleanOption(option =>
       option
         .setName('isfull')
-        .setDescription('whether or not the server is full'))
+        .setDescription('полон ли сервер'))
     .addStringOption(option =>
       option
         .setName('player')
-        .setDescription('The name of a player that is currently playing on the server'))
+        .setDescription('Имя игрока, который сейчас играет на сервере'))
     .addStringOption(option =>
       option
         .setName('uuid')
-        .setDescription('The uuid of a player that is currently playing on the server'))
+        .setDescription('UUID игрока, который сейчас играет на сервере'))
     .addStringOption(option =>
       option
         .setName('playerhistory')
-        .setDescription('The name of a player that has been on the server in the past'))
+        .setDescription('Имя игрока, который был на сервере в прошлом'))
     .addStringOption(option =>
       option
         .setName('uuidhistory')
-        .setDescription('The uuid of a player that has been on the server in the past'))
+        .setDescription('UUID игрока, который был на сервере в прошлом'))
     .addStringOption(option =>
       option
         .setName('version')
-        .setDescription('The version of the server'))
+        .setDescription('Версия сервера'))
     .addIntegerOption(option =>
       option
         .setName('protocol')
-        .setDescription('The protocol version of the server'))
+        .setDescription('Версия протокола сервера'))
     .addBooleanOption(option =>
       option
         .setName('hasimage')
-        .setDescription('Whether or not the server has a custom favicon'))
+        .setDescription('Есть ли у сервера свой favicon'))
     .addStringOption(option =>
       option
         .setName('description')
-        .setDescription('The description of the server'))
+        .setDescription('Описание сервера'))
     .addBooleanOption(option =>
       option
         .setName('hasplayerlist')
-        .setDescription('Whether or not the server has player list enabled'))
+        .setDescription('Включён ли на сервере список игроков'))
     .addIntegerOption(option =>
       option
         .setName('seenafter')
-        .setDescription('The oldest time a server can be last seen (this doesn\'t mean it\'s offline, use /help for more info)')
+        .setDescription('Самое старое время, когда сервер был в последний раз виден (это не значит, что он офлайн, используйте /help для подробностей)')
         .setAutocomplete(true))
     .addStringOption(option =>
       option
         .setName('iprange')
-        .setDescription('The ip subnet a server\'s ip has to be within'))
+        .setDescription('IP-подсеть, в которой должен находиться IP сервера'))
     .addStringOption(option =>
       option
         .setName('excluderange')
-        .setDescription('The ip subnet a server\'s ip cannot be within'))
+        .setDescription('IP-подсеть, в которой IP сервера находиться не должен'))
     .addIntegerOption(option =>
       option
         .setName('port')
-        .setDescription('The port the server is hosted on'))
+        .setDescription('Порт, на котором размещён сервер'))
     .addStringOption(option =>
       option
         .setName('country')
-        .setDescription('The country the server is hosted in')
+        .setDescription('Страна, в которой размещён сервер')
         .setAutocomplete(true))
     .addStringOption(option =>
       option
         .setName('org')
-        .setDescription('The organization hosting the server')
+        .setDescription('Организация, размещающая сервер')
         .setAutocomplete(true))
     .addBooleanOption(option =>
       option
         .setName('cracked')
-        .setDescription('Whether or not the server is cracked (offline mode)'))
+        .setDescription('Является ли сервер пиратским (офлайн-режим)'))
     .addBooleanOption(option =>
       option
         .setName('whitelisted')
-        .setDescription('Whether or not the server has a whitelisted'))
+        .setDescription('Есть ли на сервере белый список'))
     .addBooleanOption(option =>
       option
         .setName('vanilla')
-        .setDescription('Whether or not the server is vanilla')),
+        .setDescription('Является ли сервер ванильным')),
   async autocomplete(interaction) {
     const focusedValue = interaction.options.getFocused(true);
     switch (focusedValue.name) {
       case 'seenafter':
-        await interaction.respond([{ name: '1 hour ago', value: Math.round(new Date().getTime() / 1000) - 3600}, { name: '6 hours ago', value: Math.round(new Date().getTime() / 1000) - 21600 }, { name: '1 day ago', value: Math.round(new Date().getTime() / 1000) - 86400 }])
+        await interaction.respond([{ name: '1 час назад', value: Math.round(new Date().getTime() / 1000) - 3600}, { name: '6 часов назад', value: Math.round(new Date().getTime() / 1000) - 21600 }, { name: '1 день назад', value: Math.round(new Date().getTime() / 1000) - 86400 }])
         break;
       case 'country':
         await interaction.respond(countryCodes.filter(choice => choice.name.toLowerCase().includes(focusedValue.value.toLowerCase())).splice(0, 25).map(choice => ({ name: choice.name, value: choice.code })));
@@ -223,7 +223,7 @@ module.exports = {
       case 'history': {
         const [ip, port] = content.split(':');
         const embed = interaction.message.embeds[0];
-        embed.data.fields[2].value = `${embed.data.fields[2].value.split('\n')[0]}\nLoading Players...`;
+        embed.data.fields[2].value = `${embed.data.fields[2].value.split('\n')[0]}\nЗагрузка игроков...`;
         await interaction.update({ embeds: [embed], components: [createButtons({ ip, port }, true, true)] });
         const playerList = (await (await fetch(`${config.api}/servers?includePlayers=true&ip=${ip}&port=${port}`)).json()).data[0].playerHistory;
         let playerCounts = embed.data.fields[2].value.split('\n')[0];
@@ -234,7 +234,7 @@ module.exports = {
       case 'online' : {
         const [ip, port] = content.split(':');
         const embed = interaction.message.embeds[0];
-        embed.data.fields[2].value = `${embed.data.fields[2].value.split('\n')[0]}\nLoading Players...`;
+        embed.data.fields[2].value = `${embed.data.fields[2].value.split('\n')[0]}\nЗагрузка игроков...`;
         await interaction.update({ embeds: [embed], components: [createButtons({ ip, port }, false, true)] });
         const playerList = (await (await fetch(`${config.api}/servers?includePlayers=true&ip=${ip}&port=${port}`)).json()).data[0].playerHistory;
         let playerCounts = embed.data.fields[2].value.split('\n')[0];
@@ -250,19 +250,19 @@ module.exports = {
     if (interaction.guild?.id == '1222761600860291163') {
       const newEmbed = new EmbedBuilder()
         .setColor('#ff0000')
-        .setTitle('Griefing Detected')
-        .setDescription('Using this bot to grief Minecraft servers is strictly prohibited. This incident has been reported.')
-        .setFooter({ text: 'Griefing flagged by MCSS Advanced Griefer Detection™' })
+        .setTitle('Обнаружен гриф')
+        .setDescription('Использование этого бота для грифинга Minecraft-серверов строго запрещено. Об этом инциденте сообщено.')
+        .setFooter({ text: 'Грифинг отмечен MCSS Advanced Griefer Detection™' })
       await interaction.editReply({ content: '', embeds: [newEmbed] });
       return;
     }
 
-    // Create unique IDs for each button
+    // Создаёт уникальные ID для каждой кнопки
     const lastResultID = `lastResult${interaction.id}`;
     const nextResultID = `nextResult${interaction.id}`;
     let lastButtonPress = null;
 
-    // Creates interactable buttons
+    // Создаёт интерактивные кнопки
     let currentEmbed = 0;
     let servers;
 
@@ -331,9 +331,9 @@ module.exports = {
       updateButtons();
     
       if (totalResults > 10) {
-        // Event listener for 'Last Page' button
+        // Обработчик события для кнопки 'Предыдущая страница'
         buttonCallbacks[lastResultID] = async (interaction) => {  
-          if (interaction.user.id != user.id) return interaction.reply({ content: 'That\'s another user\'s command, use /search to create your own', ephemeral: true });
+          if (interaction.user.id != user.id) return interaction.reply({ content: 'Это команда другого пользователя, используйте /search, чтобы создать свою', ephemeral: true });
           await interaction.deferUpdate();
           lastButtonPress = new Date();
           currentEmbed -= 10;
@@ -342,7 +342,7 @@ module.exports = {
           if (servers.error) {
             let errorEmbed = new EmbedBuilder()
               .setColor('#ff0000')
-              .setTitle('Error')
+              .setTitle('Ошибка')
               .setDescription(servers.error)
             await interaction.editReply({ content: '', embeds: [errorEmbed]})
             return;
@@ -353,9 +353,9 @@ module.exports = {
           await interaction.editReply({ embeds: [newEmbed], components: [buttons, infoButtons, infoButtons2].filter(a =>a.components.length > 0) });
         }
 
-        // Event listener for 'Next Page' button
+        // Обработчик события для кнопки 'Следующая страница'
         buttonCallbacks[nextResultID] = async (interaction) => {
-          if (interaction.user.id != user.id) return interaction.reply({ content: 'That\'s another user\'s command, use /search to create your own', ephemeral: true });
+          if (interaction.user.id != user.id) return interaction.reply({ content: 'Это команда другого пользователя, используйте /search, чтобы создать свою', ephemeral: true });
           await interaction.deferUpdate();
           lastButtonPress = new Date();
           currentEmbed += 10;
@@ -364,7 +364,7 @@ module.exports = {
           if (servers.error) {
             let errorEmbed = new EmbedBuilder()
               .setColor('#ff0000')
-              .setTitle('Error')
+              .setTitle('Ошибка')
               .setDescription(servers.error)
             await interaction.editReply({ content: '', embeds: [errorEmbed]})
             return;
@@ -379,7 +379,7 @@ module.exports = {
       return [buttons, infoButtons, infoButtons2].filter(a => a != null && a.components.length > 0);
     }
     
-    // Get arguments
+    // Получает аргументы
     if (interaction.options.getInteger('page') != null) currentEmbed = interaction.options.getInteger('page') - 1;
     let playerCount;
     let minOnline;
@@ -398,8 +398,8 @@ module.exports = {
       if ((minOnline != null && isNaN(minOnline)) || (maxOnline != null && isNaN(maxOnline))) {
         const newEmbed = new EmbedBuilder()
           .setColor('#ff0000')
-          .setTitle('User Error')
-          .setDescription('Invalid online player range')
+          .setTitle('Ошибка пользователя')
+          .setDescription('Недопустимый диапазон игроков онлайн')
         await interaction.reply({ content: '', embeds: [newEmbed] });
         return;
       }
@@ -502,29 +502,29 @@ module.exports = {
     if (whitelisted != null) args.append('whitelisted', whitelisted);
     if (vanilla != null) args.append('vanilla', vanilla);
 
-    let argumentList = 'Searching...';
-    argumentList += `\n- **${sort == 'none' ? 'not sorted' : `sorted by ${{ 'lastSeen': 'Last Ping', 'discovered': 'Dicovery Date' }[sort.split(':')[0]]} (${{ 'a': 'ascending', 'd': 'descending' }[sort.split(':')[1]]})`}**`;
-    if (playerCount != null) argumentList += `\n- **playercount:** ${playerCount}`;
-    if (playerCap != null) argumentList += `\n- **playercap:** ${playerCap}`;
-    if (isFull != null) argumentList += `\n- **${isFull ? 'is' : 'not'} full**`;
-    if (player != null) argumentList += `\n- **player:** ${player}`;
+    let argumentList = 'Поиск...';
+    argumentList += `\n- **${sort == 'none' ? 'не отсортировано' : `сортировка по ${{ 'lastSeen': 'Последний пинг', 'discovered': 'Дата обнаружения' }[sort.split(':')[0]]} (${{ 'a': 'по возрастанию', 'd': 'по убыванию' }[sort.split(':')[1]]})`}**`;
+    if (playerCount != null) argumentList += `\n- **кол-во игроков:** ${playerCount}`;
+    if (playerCap != null) argumentList += `\n- **лимит игроков:** ${playerCap}`;
+    if (isFull != null) argumentList += `\n- **${isFull ? 'полный' : 'не полный'}**`;
+    if (player != null) argumentList += `\n- **игрок:** ${player}`;
     if (uuid != null) argumentList += `\n- **uuid:** ${uuid}`;
-    if (playerHistory != null) argumentList += `\n- **playerhistory:** ${playerHistory}`;
-    if (uuidHistory != null) argumentList += `\n- **uuidhistory:** ${uuidHistory}`;
-    if (version != null) argumentList += `\n- **version:** ${version}`;
-    if (protocol != null) argumentList += `\n- **protocol:** ${protocol}`;
-    if (hasImage != null) argumentList += `\n- **${hasImage ? 'has' : 'doesn\'t have'} a custom favicon**`;
-    if (description != null) argumentList += `\n- **description:** ${description}`;
-    if (hasPlayerList != null) argumentList += `\n- **player list ${hasPlayerList ? 'enabled': 'disabled'}**`;
-    if (seenAfter != null) argumentList += `\n- **seenafter: **<t:${seenAfter}:f>`;
-    if (ipRange != null) argumentList += `\n- **iprange: **${ipRange}`;
-    if (excludeRange != null) argumentList += `\n- **excluderange: **${excludeRange}`;
-    if (port != null) argumentList += `\n- **port: **${port}`;
-    if (country != null) argumentList += `\n- **country: **:flag_${country.toLowerCase()}: ${country}`;
-    if (org != null) argumentList += `\n- **org: **${org}`;
-    if (cracked != null) argumentList += `\n- **auth: **${cracked ? 'cracked' : 'premium' }`;
-    if (whitelisted != null) argumentList += `\n- **${whitelisted ? 'whitelisted' : 'not whitelisted'}**`;
-    if (vanilla != null) argumentList += `\n- **${vanilla ? 'vanilla' : 'not vanilla'}**`;
+    if (playerHistory != null) argumentList += `\n- **история игроков:** ${playerHistory}`;
+    if (uuidHistory != null) argumentList += `\n- **история uuid:** ${uuidHistory}`;
+    if (version != null) argumentList += `\n- **версия:** ${version}`;
+    if (protocol != null) argumentList += `\n- **протокол:** ${protocol}`;
+    if (hasImage != null) argumentList += `\n- **${hasImage ? 'есть' : 'нет'} свой favicon**`;
+    if (description != null) argumentList += `\n- **описание:** ${description}`;
+    if (hasPlayerList != null) argumentList += `\n- **список игроков ${hasPlayerList ? 'включён': 'отключён'}**`;
+    if (seenAfter != null) argumentList += `\n- **виден после: **<t:${seenAfter}:f>`;
+    if (ipRange != null) argumentList += `\n- **диапазон IP: **${ipRange}`;
+    if (excludeRange != null) argumentList += `\n- **исключить диапазон: **${excludeRange}`;
+    if (port != null) argumentList += `\n- **порт: **${port}`;
+    if (country != null) argumentList += `\n- **страна: **:flag_${country.toLowerCase()}: ${country}`;
+    if (org != null) argumentList += `\n- **организация: **${org}`;
+    if (cracked != null) argumentList += `\n- **аутентификация: **${cracked ? 'пиратская' : 'премиум' }`;
+    if (whitelisted != null) argumentList += `\n- **${whitelisted ? 'с белым списком' : 'без белого списка'}**`;
+    if (vanilla != null) argumentList += `\n- **${vanilla ? 'ванильный' : 'не ванильный'}**`;
 
     await interaction.reply({ content: argumentList, components: createListButtons() });
     
@@ -532,7 +532,7 @@ module.exports = {
     if (servers.error) {
       let errorEmbed = new EmbedBuilder()
         .setColor('#ff0000')
-        .setTitle('Error')
+        .setTitle('Ошибка')
         .setDescription(servers.error)
       await interaction.editReply({ content: '', embeds: [errorEmbed]})
       return;
@@ -544,7 +544,7 @@ module.exports = {
 
       let components = createListButtons(servers.length);
       let newEmbed = createList(servers, currentEmbed, 0, minimal);
-      newEmbed.data.title = 'Counting...';
+      newEmbed.data.title = 'Подсчёт...';
       await interaction.editReply({ content: '', embeds: [newEmbed], components });
       await (new Promise(resolve => {
         const waitForCount = setInterval(() => {
@@ -559,7 +559,7 @@ module.exports = {
       newEmbed = createList(servers, currentEmbed, totalResults, minimal);
       await interaction.editReply({ embeds: [newEmbed], components })
       
-      // Times out the buttons after a few seconds of inactivity (set in buttonTimeout variable)
+      // Отключает кнопки после нескольких секунд неактивности (задано в переменной buttonTimeout)
       lastButtonPress = Date.now();
       const buttonTimeoutCheck = setInterval(async () => {
         if (Date.now() / 1000 - lastButtonPress / 1000 >= config.commands.search.timeout) {
@@ -571,6 +571,6 @@ module.exports = {
           await interaction.editReply({ components });
         }
       }, 500);
-    } else await interaction.editReply({ content: '', embeds: [new EmbedBuilder().setColor('#02a337').setTitle('No matches could be found')], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel('API').setStyle(ButtonStyle.Link).setURL(`${config.displayApi || config.api}/servers?limit=10&skip=${currentEmbed}&${args}`))] }); 
+    } else await interaction.editReply({ content: '', embeds: [new EmbedBuilder().setColor('#02a337').setTitle('Совпадений не найдено')], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel('API').setStyle(ButtonStyle.Link).setURL(`${config.displayApi || config.api}/servers?limit=10&skip=${currentEmbed}&${args}`))] }); 
   }
 }
