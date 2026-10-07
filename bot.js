@@ -4,7 +4,7 @@ const path = require('node:path');
 const { Client, Partials, Collection, Events, GatewayIntentBits, EmbedBuilder, ActivityType } = require('discord.js');
 const buttonCallbacks = {};
 
-// Ловит все ошибки
+// 1 все ошибки
 process.on('uncaughtException', console.error);
 
 // Инициализирует Discord.js (вместе с командами)
