@@ -76,7 +76,7 @@ module.exports = {
 					{ name: 'port (integer)', value: 'Порт, на котором размещён сервер', inline: true },
 					{ name: 'gamemode (text)', value: 'Режим игры по умолчанию на сервере', inline: true },
 					{ name: 'country (text)', value: 'Страна, в которой размещён сервер (используйте варианты автодополнения)', inline: true },
-					{ name: 'org (text)', value: '1, которой принадлежит IP', inline: true },
+					{ name: 'org (text)', value: 'Организация, которой принадлежит IP', inline: true },
 				),
 			]
     interaction.reply({ embeds, ephemeral: true });
