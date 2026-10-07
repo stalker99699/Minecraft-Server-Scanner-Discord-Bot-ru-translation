@@ -1,10 +1,10 @@
-// Fectches dependencies and inits variables
+// Загружает зависимости и инициализирует переменные
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { getDescription, thousandsSeparators, cleanIp, displayPlayers } = require('../lib.js');
 const countryCodes = require('../countries.json');
 const orgs = require('../orgs.json');
 const config = require('../config.json');
-const buttonTimeout = 300; // In seconds
+const buttonTimeout = 300; // В секундах
 
 const shortenString = (string, length) => (string.length > length ? `${string.slice(0, length - 3)}...` : string);
 
@@ -18,19 +18,19 @@ function createEmbed(server) {
   const newEmbed = new EmbedBuilder()
     .setColor('#02a337')
     .setTitle(`${cleanIp(server.ip)}${server.port == 25565 ? '' : `:${server.port}`}`)
-    .setAuthor({ name: 'MC Server Scanner', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
+    .setAuthor({ name: 'Сканер MC-серверов', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
     .addFields(
       { name: 'IP', value: cleanIp(parseInt(server.ip)) },
-      { name: 'Port', value: String(server.port) },
-      { name: 'Version', value: `${server.version.name} (${server.version.protocol})` },
-      { name: 'Description', value: `${getDescription(description)}\n\n${getDescription(description2)}` || '​' },
-      { name: 'Players', value: displayPlayers(server) },
-      { name: 'Game Mode', value: `${server.gamemode.name} (${server.gamemode.id})` },
-      { name: 'Education Edition', value: String(server.education) },
-      { name: 'Discovered', value: `<t:${server.discovered}:${(new Date().getTime() / 1000) - server.discovered > 86400 ? 'D' : 'R'}>`},
-      { name: 'Last Seen', value: `<t:${server.lastSeen}:${(new Date().getTime() / 1000) - server.lastSeen > 86400 ? 'D' : 'R'}>` },
-      { name: 'Country', value: `${server.geo.country == null ? 'Unknown' : `:flag_${server.geo.country.toLowerCase()}: ${server.geo.country}`}` },
-      { name: 'Organization', value: server.org == null ? 'Unknown' : server.org }
+      { name: 'Порт', value: String(server.port) },
+      { name: 'Версия', value: `${server.version.name} (${server.version.protocol})` },
+      { name: 'Описание', value: `${getDescription(description)}\n\n${getDescription(description2)}` || '​' },
+      { name: 'Игроки', value: displayPlayers(server) },
+      { name: 'Режим игры', value: `${server.gamemode.name} (${server.gamemode.id})` },
+      { name: 'Образовательная версия', value: server.education ? 'Да' : 'Нет' },
+      { name: 'Обнаружен', value: `<t:${server.discovered}:${(new Date().getTime() / 1000) - server.discovered > 86400 ? 'D' : 'R'}>`},
+      { name: 'Последний раз виден', value: `<t:${server.lastSeen}:${(new Date().getTime() / 1000) - server.lastSeen > 86400 ? 'D' : 'R'}>` },
+      { name: 'Страна', value: `${server.geo.country == null ? 'Неизвестно' : `:flag_${server.geo.country.toLowerCase()}: ${server.geo.country}`}` },
+      { name: 'Организация', value: server.org == null ? 'Неизвестно' : server.org }
     )
     .setTimestamp();
 
@@ -54,8 +54,8 @@ const displayVersion = (version) => `${shortenString(String(version?.name), 19)}
 function createList(servers, currentEmbed, totalResults, minimal) {
   const embed = new EmbedBuilder()
     .setColor('#02a337')
-    .setTitle(`Results ${thousandsSeparators(currentEmbed + 1)}-${thousandsSeparators(currentEmbed + servers.length)}/${thousandsSeparators(totalResults)}`)
-    .setAuthor({ name: 'MC Server Scanner', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
+    .setTitle(`Результаты ${thousandsSeparators(currentEmbed + 1)}-${thousandsSeparators(currentEmbed + servers.length)}/${thousandsSeparators(totalResults)}`)
+    .setAuthor({ name: 'Сканер MC-серверов', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
     .setTimestamp();
   
   let description = '';
@@ -79,97 +79,97 @@ function createList(servers, currentEmbed, totalResults, minimal) {
   return embed;
 }
 
-// Exports an object with the parameters for the target server
+// Экспортирует объект с параметрами для целевого сервера
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('bedrocksearch')
-    .setDescription('Searches the database for a Bedrock Edition server with specific properties')
+    .setDescription('Ищет в базе данных сервер Bedrock Edition с определёнными свойствами')
     .addBooleanOption(option =>
       option
         .setName('minimal')
-        .setDescription('Only shows ip and port in preview (recommended for mobile users)'))
+        .setDescription('Показывает только ip и порт в предпросмотре (рекомендуется для мобильных пользователей)'))
     .addStringOption(option =>
       option
         .setName('sort')
-        .setDescription('How to sort results')
+        .setDescription('Как сортировать результаты')
         .addChoices(
-          { name: 'None', value: 'none' },
-          { name: 'Last Ping (new to old)', value: 'lastSeen:d' },
-          { name: 'Last Ping (old to new)', value: 'lastSeen:a' },
-          { name: 'Discovery Date (new to old)', value: 'discovered:d' },
-          { name: 'Discovery Date (old to new)', value: 'discovered:a' }
+          { name: 'Нет', value: 'none' },
+          { name: 'Последний пинг (от новых к старым)', value: 'lastSeen:d' },
+          { name: 'Последний пинг (от старых к новым)', value: 'lastSeen:a' },
+          { name: 'Дата обнаружения (от новых к старым)', value: 'discovered:d' },
+          { name: 'Дата обнаружения (от старых к новым)', value: 'discovered:a' }
         ))
     .addIntegerOption(option =>
       option
         .setName('page')
-        .setDescription('Skips to a page of results'))
+        .setDescription('Переходит к странице результатов'))
     .addStringOption(option =>
       option
         .setName('playercount')
-        .setDescription('A range of online player counts'))
+        .setDescription('Диапазон количества игроков онлайн'))
     .addIntegerOption(option =>
       option
         .setName('playercap')
-        .setDescription('The server\'s maximum player capacity'))
+        .setDescription('Максимальная вместимость сервера по игрокам'))
     .addBooleanOption(option =>
       option
         .setName('isfull')
-        .setDescription('whether or not the server is full'))
+        .setDescription('полон ли сервер'))
     .addStringOption(option =>
       option
         .setName('version')
-        .setDescription('The version of the server'))
+        .setDescription('Версия сервера'))
     .addIntegerOption(option =>
       option
         .setName('protocol')
-        .setDescription('The protocol version of the server'))
+        .setDescription('Версия протокола сервера'))
     .addStringOption(option =>
       option
         .setName('description')
-        .setDescription('The description of the server'))
+        .setDescription('Описание сервера'))
     .addIntegerOption(option =>
       option
         .setName('seenafter')
-        .setDescription('The oldest time a server can be last seen (this doesn\'t mean it\'s offline, use /help for more info)')
+        .setDescription('Самое старое время, когда сервер был в последний раз виден (это не значит, что он офлайн, используйте /help для подробностей)')
         .setAutocomplete(true))
     .addStringOption(option =>
       option
         .setName('iprange')
-        .setDescription('The ip subnet a server\'s ip has to be within'))
+        .setDescription('IP-подсеть, в которой должен находиться IP сервера'))
     .addStringOption(option =>
       option
         .setName('excluderange')
-        .setDescription('The ip subnet a server\'s ip cannot be within'))
+        .setDescription('IP-подсеть, в которой IP сервера находиться не должен'))
     .addIntegerOption(option =>
       option
         .setName('port')
-        .setDescription('The port the server is hosted on'))
+        .setDescription('Порт, на котором размещён сервер'))
     .addStringOption(option =>
       option
         .setName('gamemode')
-        .setDescription('The default game mode of the server')
+        .setDescription('Режим игры по умолчанию на сервере')
         .addChoices(
-          { name: 'Survival', value: 'survival' },
-          { name: 'Creative', value: 'creative' },
-          { name: 'Adventure', value: 'adventure' },
-          { name: 'Spectator', value: 'spectator' }
+          { name: 'Выживание', value: 'survival' },
+          { name: 'Творческий', value: 'creative' },
+          { name: 'Приключение', value: 'adventure' },
+          { name: 'Наблюдатель', value: 'spectator' }
         )
     )
     .addStringOption(option =>
       option
         .setName('country')
-        .setDescription('The country the server is hosted in')
+        .setDescription('Страна, в которой размещён сервер')
         .setAutocomplete(true))
     .addStringOption(option =>
       option
         .setName('org')
-        .setDescription('The organization hosting the server')
+        .setDescription('Организация, размещающая сервер')
         .setAutocomplete(true)),
   async autocomplete(interaction) {
     const focusedValue = interaction.options.getFocused(true);
     switch (focusedValue.name) {
       case 'seenafter':
-        await interaction.respond([{ name: '1 hour ago', value: Math.round(new Date().getTime() / 1000) - 3600}, { name: '6 hours ago', value: Math.round(new Date().getTime() / 1000) - 21600 }, { name: '1 day ago', value: Math.round(new Date().getTime() / 1000) - 86400 }])
+        await interaction.respond([{ name: '1 час назад', value: Math.round(new Date().getTime() / 1000) - 3600}, { name: '6 часов назад', value: Math.round(new Date().getTime() / 1000) - 21600 }, { name: '1 день назад', value: Math.round(new Date().getTime() / 1000) - 86400 }])
         break;
       case 'country':
         await interaction.respond(countryCodes.filter(choice => choice.name.toLowerCase().includes(focusedValue.value.toLowerCase())).splice(0, 25).map(choice => ({ name: choice.name, value: choice.code })));
@@ -196,14 +196,14 @@ module.exports = {
     if (interaction.guild?.id == '1222761600860291163') {
       const newEmbed = new EmbedBuilder()
         .setColor('#ff0000')
-        .setTitle('Griefing Detected')
-        .setDescription('Using this bot to grief Minecraft servers is strictly prohibited. This incident has been reported.')
-        .setFooter({ text: 'Griefing flagged by MCSS Advanced Griefer Detection™' })
+        .setTitle('Обнаружен гриф')
+        .setDescription('Использование этого бота для грифинга Minecraft-серверов строго запрещено. Об этом инциденте сообщено.')
+        .setFooter({ text: 'Грифинг отмечен MCSS Advanced Griefer Detection™' })
       await interaction.editReply({ content: '', embeds: [newEmbed] });
       return;
     }
 
-    // Create unique IDs for each button
+    // Создаёт уникальные ID для каждой кнопки
     const lastResultID = `lastResult${interaction.id}`;
     const nextResultID = `nextResult${interaction.id}`;
     let lastButtonPress = null;
@@ -263,9 +263,9 @@ module.exports = {
       updateButtons();
     
       if (totalResults > 10) {
-        // Event listener for 'Last Page' button
+        // Обработчик события для кнопки 'Предыдущая страница'
         buttonCallbacks[lastResultID] = async (interaction) => {  
-          if (interaction.user.id != user.id) return interaction.reply({ content: 'That\'s another user\'s command, use /search to create your own', ephemeral: true });
+          if (interaction.user.id != user.id) return interaction.reply({ content: 'Это команда другого пользователя, используйте /search, чтобы создать свою', ephemeral: true });
           await interaction.deferUpdate();
           lastButtonPress = new Date();
           currentEmbed -= 10;
@@ -276,9 +276,9 @@ module.exports = {
           await interaction.editReply({ embeds: [newEmbed], components: [buttons].concat(infoButtons) });
         }
 
-        // Event listener for 'Next Page' button
+        // Обработчик события для кнопки 'Следующая страница'
         buttonCallbacks[nextResultID] = async (interaction) => {
-          if (interaction.user.id != user.id) return interaction.reply({ content: 'That\'s another user\'s command, use /search to create your own', ephemeral: true });
+          if (interaction.user.id != user.id) return interaction.reply({ content: 'Это команда другого пользователя, используйте /search, чтобы создать свою', ephemeral: true });
           await interaction.deferUpdate();
           lastButtonPress = new Date();
           currentEmbed += 10;
@@ -293,7 +293,7 @@ module.exports = {
       return [buttons].concat(infoButtons);
     }
     
-    // Get arguments
+    // Получает аргументы
     let currentEmbed = (interaction.options.getInteger('page') || 1) - 1;
     let playerCount;
     let minOnline;
@@ -312,8 +312,8 @@ module.exports = {
       if ((minOnline != null && isNaN(minOnline)) || (maxOnline != null && isNaN(maxOnline))) {
         const newEmbed = new EmbedBuilder()
           .setColor('#ff0000')
-          .setTitle('User Error')
-          .setDescription('Invalid online player range')
+          .setTitle('Ошибка пользователя')
+          .setDescription('Недопустимый диапазон игроков онлайн')
         await interaction.reply({ content: '', embeds: [newEmbed] });
         return;
       }
@@ -333,21 +333,21 @@ module.exports = {
     let country = interaction.options.getString('country');
     let org = interaction.options.getString('org');
 
-    let argumentList = 'Searching...';
-    argumentList += `\n- **${sort == 'none' ? 'not sorted' : `sorted by ${{ 'lastSeen': 'Last Ping', 'discovered': 'Dicovery Date' }[sort.split(':')[0]]} (${{ 'a': 'ascending', 'd': 'descending' }[sort.split(':')[1]]})`}**`;
-    if (playerCount != null) argumentList += `\n- **playercount:** ${playerCount}`;
-    if (playerCap != null) argumentList += `\n- **playercap:** ${playerCap}`;
-    if (isFull != null) argumentList += `\n- **${isFull ? 'is' : 'not'} full**`;
-    if (version != null) argumentList += `\n- **version:** ${version}`;
-    if (protocol != null) argumentList += `\n- **protocol:** ${protocol}`;
-    if (description != null) argumentList += `\n- **description:** ${description}`;
-    if (seenAfter != null) argumentList += `\n- **seenafter: **<t:${seenAfter}:f>`;
-    if (ipRange != null) argumentList += `\n- **iprange: **${ipRange}`;
-    if (excludeRange != null) argumentList += `\n- **excluderange: **${excludeRange}`;
-    if (port != null) argumentList += `\n- **port: **${port}`;
-    if (gamemode != null) argumentList += `\n- **gamemode: **${gamemode}`;
-    if (country != null) argumentList += `\n- **country: **:flag_${country.toLowerCase()}: ${country}`;
-    if (org != null) argumentList += `\n- **org: **${org}`;
+    let argumentList = 'Поиск...';
+    argumentList += `\n- **${sort == 'none' ? 'не отсортировано' : `сортировка по ${{ 'lastSeen': 'Последний пинг', 'discovered': 'Дата обнаружения' }[sort.split(':')[0]]} (${{ 'a': 'по возрастанию', 'd': 'по убыванию' }[sort.split(':')[1]]})`}**`;
+    if (playerCount != null) argumentList += `\n- **кол-во игроков:** ${playerCount}`;
+    if (playerCap != null) argumentList += `\n- **лимит игроков:** ${playerCap}`;
+    if (isFull != null) argumentList += `\n- **${isFull ? 'полный' : 'не полный'}**`;
+    if (version != null) argumentList += `\n- **версия:** ${version}`;
+    if (protocol != null) argumentList += `\n- **протокол:** ${protocol}`;
+    if (description != null) argumentList += `\n- **описание:** ${description}`;
+    if (seenAfter != null) argumentList += `\n- **виден после: **<t:${seenAfter}:f>`;
+    if (ipRange != null) argumentList += `\n- **диапазон IP: **${ipRange}`;
+    if (excludeRange != null) argumentList += `\n- **исключить диапазон: **${excludeRange}`;
+    if (port != null) argumentList += `\n- **порт: **${port}`;
+    if (gamemode != null) argumentList += `\n- **режим игры: **${gamemode}`;
+    if (country != null) argumentList += `\n- **страна: **:flag_${country.toLowerCase()}: ${country}`;
+    if (org != null) argumentList += `\n- **организация: **${org}`;
 
     await interaction.reply(argumentList);
 
@@ -426,7 +426,7 @@ module.exports = {
 
       let components = createListButtons(servers.length);
       let newEmbed = createList(servers, currentEmbed, 0, minimal);
-      newEmbed.data.title = 'Counting...';
+      newEmbed.data.title = 'Подсчёт...';
       await interaction.editReply({ content: '', embeds: [newEmbed], components });
       await (new Promise(resolve => {
         const waitForCount = setInterval(() => {
@@ -440,7 +440,7 @@ module.exports = {
       components = createListButtons(totalResults);
       newEmbed = createList(servers, currentEmbed, totalResults, minimal);
       await interaction.editReply({ embeds: [newEmbed], components })
-      // Times out the buttons after a few seconds of inactivity (set in buttonTimeout variable)
+      // Отключает кнопки после нескольких секунд неактивности (задано в переменной buttonTimeout)
       lastButtonPress = Date.now();
       const buttonTimeoutCheck = setInterval(async () => {
         if (Date.now() / 1000 - lastButtonPress / 1000 >= buttonTimeout) {
@@ -452,6 +452,6 @@ module.exports = {
           await interaction.editReply({ components });
         }
       }, 500);
-    } else await interaction.editReply({ content: '', embeds: [new EmbedBuilder().setColor('#02a337').setTitle('No matches could be found')], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel('API').setStyle(ButtonStyle.Link).setURL(`${config.displayApi || config.api}/bedrockServers?limit=10&skip=${currentEmbed}&${args}`))] }); 
+    } else await interaction.editReply({ content: '', embeds: [new EmbedBuilder().setColor('#02a337').setTitle('Совпадений не найдено')], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setLabel('API').setStyle(ButtonStyle.Link).setURL(`${config.displayApi || config.api}/bedrockServers?limit=10&skip=${currentEmbed}&${args}`))] }); 
   }
 }
