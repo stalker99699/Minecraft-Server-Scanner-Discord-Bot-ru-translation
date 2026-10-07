@@ -8,7 +8,7 @@ module.exports = {
     .setDescription('Получает информацию с указанного сервера Minecraft Bedrock')
     .addStringOption(option =>
       option.setName('ip')
-	    .setDescription('IP-адрес сервера для пинга')
+	    .setDescription('IP-адрес 1 для пинга')
       .setRequired(true))
     .addIntegerOption(option =>
       option.setName('port')
