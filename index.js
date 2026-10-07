@@ -3,7 +3,7 @@ const config = require('./config.json');
 const fs = require('node:fs');
 
 
-// Deploy slash commands
+// Развёртывает слэш-команды
 const commands = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -13,17 +13,17 @@ for (const file of commandFiles) {
 const rest = new REST({ version: '10' }).setToken(config.discord.token);
 (async () => {
 	try {
-		console.log(`[Refreshing]: ${commands.length}`);
+		console.log(`[Обновление]: ${commands.length}`);
 
-		// The put method is used to fully refresh all commands in the guild with the current set
+		// Метод put используется для полного обновления всех команд в гильдии текущим набором
 		const data = await rest.put(
             Routes.applicationCommands(config.discord.clientId),
             { body: commands },
         );
 
-		console.log(`[Refreshed]: ${data.length}`);
+		console.log(`[Обновлено]: ${data.length}`);
 	} catch (error) {
-		// Catches & logs any errors into the console
+		// Ловит и выводит любые ошибки в консоль
 		console.error(error);
 	}
 })();
@@ -32,7 +32,7 @@ const rest = new REST({ version: '10' }).setToken(config.discord.token);
 const manager = new ShardingManager('./bot.js', { token: config.discord.token });
 let shards = [];
 manager.on('shardCreate', shard => {
-    console.log(`Launched shard ${shard.id}`);
+    console.log(`Запущен шард ${shard.id}`);
     shards.push(shard);
 });
 manager.spawn();
