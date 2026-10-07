@@ -1,16 +1,16 @@
-// Imports
+// Импорты
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { thousandsSeparators } = require('../lib.js');
 const config = require('../config.json');
 
 module.exports = {
-    // Sets up the command
+    // Настраивает команду
     data: new SlashCommandBuilder()
         .setName('stats')
-        .setDescription('Sends helpful info about the bot'),
+        .setDescription('Отправляет полезную информацию о боте'),
     async execute(interaction, buttonCallbacks, client, totalServers, updateTotalServers, totalBedrock, updateTotalBedrock) {
-        if (!config.discord.stats) return await interaction.reply({ content: 'Statistics have been disabled on this bot.', ephemeral: true });
-        await interaction.reply({ content: 'Retrieving stats...', ephemeral: true });
+        if (!config.discord.stats) return await interaction.reply({ content: 'Статистика отключена на этом боте.', ephemeral: true });
+        await interaction.reply({ content: 'Получение статистики...', ephemeral: true });
 
         if (totalServers == null) {
             totalServers = (await (await fetch(`${config.api}/count`)).json()).data;
@@ -24,13 +24,13 @@ module.exports = {
 
         const newEmbed = new EmbedBuilder()
             .setColor("#02a337")
-            .setTitle('Statistics')
-            .setAuthor({ name: 'MC Server Scanner', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png'})
+            .setTitle('Статистика')
+            .setAuthor({ name: 'Сканер MC-серверов', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png'})
             .addFields(
-                { name: 'Author:', value: '<@720658048611516559> (@cornbread2100)' },
-                { name: 'Java Servers:', value: totalServers.toLocaleString(), inline: true },
-                { name: 'Bedrock Servers:', value: totalBedrock.toLocaleString(), inline: true },
-                { name: 'Bot Stats:', value: `In ${(await client.shard.fetchClientValues('guilds.cache.size')).reduce((a, b) => a + b, 0).toLocaleString()} Discord servers. Last restart: <t:${Math.floor((new Date().getTime() - client.uptime) / 1000)}:R>`}
+                { name: 'Автор:', value: '<@720658048611516559> (@cornbread2100)' },
+                { name: 'Серверы Java:', value: totalServers.toLocaleString(), inline: true },
+                { name: 'Серверы Bedrock:', value: totalBedrock.toLocaleString(), inline: true },
+                { name: 'Статистика бота:', value: `В ${(await client.shard.fetchClientValues('guilds.cache.size')).reduce((a, b) => a + b, 0).toLocaleString()} Discord-серверах. Последний перезапуск: <t:${Math.floor((new Date().getTime() - client.uptime) / 1000)}:R>`}
             )
         await interaction.editReply({ content: '', embeds: [newEmbed], ephemeral:true });
     } 
