@@ -1,4 +1,4 @@
-// Imports
+// Импорты
 const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const { getDescription, thousandsSeparators, cleanIp, displayPlayers } = require('../lib.js')
 const config = require('../config.json')
@@ -24,35 +24,35 @@ function createEmbed(server, currentEmbed, totalResults) {
   }
   const newEmbed = new EmbedBuilder()
     .setColor("#02a337")
-    .setTitle(`Server ${thousandsSeparators(currentEmbed + 1)}/${thousandsSeparators(totalResults)}`)
-    .setAuthor({ name: 'MC Server Scanner', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
+    .setTitle(`Сервер ${thousandsSeparators(currentEmbed + 1)}/${thousandsSeparators(totalResults)}`)
+    .setAuthor({ name: 'Сканер MC-серверов', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
     .addFields(
       { name: 'IP', value: cleanIp(parseInt(server.ip)) },
-      { name: 'Port', value: String(server.port) },
-      { name: 'Version', value: `${server.version.name} (${server.version.protocol})` },
-      { name: 'Description', value: getDescription(description) },
-      { name: 'Players', value: displayPlayers(server) },
-      { name: 'Discovered', value: `<t:${server.discovered}:${(new Date().getTime() / 1000) - server.discovered > 86400 ? 'D' : 'R'}>`},
-      { name: 'Last Seen', value: `<t:${server.lastSeen}:${(new Date().getTime() / 1000) - server.lastSeen > 86400 ? 'D' : 'R'}>` }
+      { name: 'Порт', value: String(server.port) },
+      { name: 'Версия', value: `${server.version.name} (${server.version.protocol})` },
+      { name: 'Описание', value: getDescription(description) },
+      { name: 'Игроки', value: displayPlayers(server) },
+      { name: 'Обнаружен', value: `<t:${server.discovered}:${(new Date().getTime() / 1000) - server.discovered > 86400 ? 'D' : 'R'}>`},
+      { name: 'Последний раз виден', value: `<t:${server.lastSeen}:${(new Date().getTime() / 1000) - server.lastSeen > 86400 ? 'D' : 'R'}>` }
     )
     .setTimestamp();
 
-  if (server.geo?.country == null) newEmbed.addFields({ name: 'Country: ', value: 'Unknown' })
-  else newEmbed.addFields({ name: 'Country: ', value: `:flag_${server.geo.country.toLowerCase()}: ${server.geo.country}` })
+  if (server.geo?.country == null) newEmbed.addFields({ name: 'Страна: ', value: 'Неизвестно' })
+  else newEmbed.addFields({ name: 'Страна: ', value: `:flag_${server.geo.country.toLowerCase()}: ${server.geo.country}` })
   
-  if (server.org == null) newEmbed.addFields({ name: 'Organization: ', value: 'Unknown' });
-  else newEmbed.addFields({ name: 'Organization: ', value: server.org });
+  if (server.org == null) newEmbed.addFields({ name: 'Организация: ', value: 'Неизвестно' });
+  else newEmbed.addFields({ name: 'Организация: ', value: server.org });
 
-  newEmbed.addFields({ name: 'Auth', value: server.cracked == true ? 'Cracked' : server.cracked == false ? 'Premium' : 'Unknown' });
-  newEmbed.addFields({ name: 'Whitelist', value: server.whitelisted == true ? 'Enabled' : server.whitelisted == false ? 'Disabled' : 'Unknown' });
+  newEmbed.addFields({ name: 'Аутентификация', value: server.cracked == true ? 'Пиратская' : server.cracked == false ? 'Премиум' : 'Неизвестно' });
+  newEmbed.addFields({ name: 'Белый список', value: server.whitelisted == true ? 'Включён' : server.whitelisted == false ? 'Отключён' : 'Неизвестно' });
   return newEmbed;
 }
 
 module.exports = {
-  // Define 'random' command
+  // Определяет команду 'random'
   data: new SlashCommandBuilder()
     .setName('random')
-	  .setDescription('Gets a random online Java Edition server'),
+	  .setDescription('Получает случайный онлайн-сервер Java Edition'),
   async execute(interaction, buttonCallbacks, client, totalServers, setTotalServers, totalBedrock, updateTotalBedrock, recentServers) {
     if (interaction.isChatInputCommand()) await interaction.deferReply();
     else await interaction.deferUpdate();
@@ -60,10 +60,10 @@ module.exports = {
     var lastButtonPress = new Date();
     const randomizeID = `randomize${interaction.user.id}`;
     const oldPlayersID = `oldPlayers${interaction.user.id}`;
-    // Status message
-    const interactionReplyMessage = await interaction.editReply({ content: 'Getting a server, please wait...', embeds: [], components: [] });
+    // Сообщение о статусе
+    const interactionReplyMessage = await interaction.editReply({ content: 'Получаю сервер, подождите...', embeds: [], components: [] });
     
-    // Get a random server from the database
+    // Получает случайный сервер из базы данных
     if (recentServers == null) recentServers = (await (await fetch(`${config.api}/count?seenAfter=${Math.round(new Date().getTime() / 1000) - 3600}`)).json()).data;
     var index = Math.floor((Math.random() * recentServers));
     const server = (await (await fetch(`${config.api}/servers?limit=1&skip=${index}&seenAfter=${Math.round(new Date().getTime() / 1000) - 3600}`)).json()).data[0];
@@ -72,9 +72,9 @@ module.exports = {
     if (server == null) {
       const embed = new EmbedBuilder()
         .setColor('#ff0000')
-        .setTitle('No recent servers found')
-        .setAuthor({ name: 'MC Server Scanner', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
-        .setDescription('This is a bug, please ping @cornbread2100 in the official support server (https://discord.gg/3u2fNRAMAN)')
+        .setTitle('Не найдено недавних серверов')
+        .setAuthor({ name: 'Сканер MC-серверов', iconURL: 'https://cdn.discordapp.com/app-icons/1037250630475059211/21d5f60c4d2568eb3af4f7aec3dbdde5.png' })
+        .setDescription('Это баг, пожалуйста, напишите @cornbread2100 в официальном сервере поддержки (https://discord.gg/3u2fNRAMAN)')
       await interaction.editReply({ content: '', embeds: [embed] });
       return;
     }
@@ -93,7 +93,7 @@ module.exports = {
       buttons.addComponents(
         new ButtonBuilder()
           .setCustomId(oldPlayersID)
-          .setLabel('Show Players')
+          .setLabel('Показать игроков')
           .setStyle(ButtonStyle.Primary)
       )
     }
@@ -104,15 +104,15 @@ module.exports = {
     buttonCallbacks[randomizeID] = async interaction => module.exports.execute(interaction, buttonCallbacks, client, totalServers, setTotalServers, recentServers);
 
     buttonCallbacks[oldPlayersID] = async interaction => {
-      if (interaction.user.id != user.id) return interaction.reply({ content: 'That\'s another user\'s command, use /random to create your own', ephemeral: true });
-      embed.data.fields[4].value =  `${server.players.online}/${server.players.max}\nLoading Players...`;
+      if (interaction.user.id != user.id) return interaction.reply({ content: 'Это команда другого пользователя, используйте /random, чтобы создать свою', ephemeral: true });
+      embed.data.fields[4].value =  `${server.players.online}/${server.players.max}\nЗагрузка игроков...`;
       buttons.components[0].data.disabled = true;
       buttons.components[1].data.disabled = true;
       await interaction.update({ content: '', embeds: [embed], components: [buttons] });
       if (playerList == null) playerList = (await (await fetch(`${config.api}/servers?includePlayers=true&ip=${server.ip}&port=${server.port}`)).json()).data.playerHistory;
       lastButtonPress = new Date();
       showingOldPlayers = !showingOldPlayers;
-      buttons.components[1].data.label = showingOldPlayers ? 'Online Players' : 'Player History';
+      buttons.components[1].data.label = showingOldPlayers ? 'Игроки онлайн' : 'История игроков';
       embed.data.fields[4].value = displayPlayers(server, playerList, showingOldPlayers);
       buttons.components[0].data.disabled = false;
       buttons.components[1].data.disabled = false;
@@ -120,7 +120,7 @@ module.exports = {
     };
     
     
-    // Times out the buttons after a few seconds of inactivity (set in buttonTimeout variable)
+    // Отключает кнопки после нескольких секунд неактивности (задано в переменной buttonTimeout)
     async function buttonTimeoutCheck() {
       if (timeSinceDate(lastButtonPress) >= buttonTimeout) {
         var buttons = new ActionRowBuilder()
@@ -135,7 +135,7 @@ module.exports = {
           buttons.addComponents(
             new ButtonBuilder()
               .setCustomId(oldPlayersID)
-              .setLabel(showingOldPlayers ? 'Online Players' : 'Player History')
+              .setLabel(showingOldPlayers ? 'Игроки онлайн' : 'История игроков')
               .setStyle(ButtonStyle.Secondary)
               .setDisabled(true)
             )
