@@ -71,7 +71,7 @@ module.exports = {
     version = '';
 
     if (rawVersion == null) {
-      version = '​'; // zero width space
+      version = '​'; // нулевой пробел
     } else if (rawVersion.name == null) {
       version = rawVersion;
     } else {
@@ -84,11 +84,11 @@ module.exports = {
       version = version.substring(0, 150) + '...';
     }
 
-    // Convert Minecraft color and formatting codes to ANSI format
+    // Преобразует цветовые и форматирующие коды Minecraft в формат ANSI
     version = module.exports.minecraftToAnsi(version);
 
     if (version == '') {
-      version = '​'; //zero width space
+      version = '​'; // нулевой пробел
     }
 
     return version;
